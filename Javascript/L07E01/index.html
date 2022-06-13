@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form>
+      <fieldset>
+        <legend>Adicionar estudante:</legend>
+        <label for="idStudentName">Nome:</label>
+        <input type="text" name="nmStudentName" id="idStudentName" />
+
+        <label for="idStudentGrade">Nota:</label>
+        <input
+          type="number"
+          name="nmStudentGrade"
+          id="idStudentGrade"
+          min="0"
+          max="10"
+          step="0.1"
+        />
+
+        <input type="button" value="Adicionar" onclick="onPressAddStudent()" />
+      </fieldset>
+    </form>
+
+    <div>
+      <h3>Nota mais alta:</h3>
+      <span id="idHighestGrade"></span>
+      <h3>Media da turma:</h3>
+      <span id="idClassAverage"></span>
+      <h3>Classe:</h3>
+      <table border="1" id="idClassDisplay">
+        <tr>
+          <td>Código</td>
+          <td>Nome</td>
+          <td>Nota</td>
+        </tr>
+      </table>
+    </div>
+    <script>
+      let maxStudents = 10;
+      let students = [];
+
+      const onPressAddStudent = () => {
+        const studentName = document.getElementById("idStudentName").value;
+        const studentGrade = parseFloat(
+          document.getElementById("idStudentGrade").value
+        );
+
+        if (!studentName || studentName.length < 3) {
+          alert("Insira um nome válido.");
+          return;
+        }
+
+        if (!studentGrade || studentGrade < 0 || studentGrade > 10) {
+          alert("Insita uma nota válida.");
+          return;
+        }
+
+        let hasAddStudent = addStudent(studentName, studentGrade);
+
+        if (!hasAddStudent) {
+          alert("Falha ao adicionar o estudante");
+          return;
+        }
+
+        updateDisplay();
+      };
+
+      const updateDisplay = () => {
+        const classAverage = document.getElementById("idClassAverage");
+        const highestGrade = document.getElementById("idHighestGrade");
+        const classDisplay = document.getElementById("idClassDisplay");
+
+        const highestStudent = getHighestGrade();
+
+        let displayInfo = "<tr><td>Código</td><td>Nome</td><td>Nota</td></tr>";
+
+        students.forEach((student) => {
+          displayInfo += `<tr><td>${student.id}</td><td>${student.name}</td><td>${student.grade}</td></tr>`;
+        });
+
+        highestGrade.innerHTML = `<b>Código:</b> ${highestStudent.id} <b>Nome:</b> ${highestStudent.name} <b>Nota:</b> ${highestStudent.grade}`;
+        classAverage.innerHTML = getClassAverage();
+        classDisplay.innerHTML = displayInfo;
+      };
+
+      const addStudent = (name, grade) => {
+        if (students.length >= maxStudents) return false;
+
+        students.push({ id: students.length, name, grade });
+
+        return true;
+      };
+
+      const getClassAverage = () => {
+        let allGradeSum = 0;
+
+        students.forEach((student) => {
+          allGradeSum += student.grade;
+        });
+
+        let average = allGradeSum / students.length;
+
+        return average;
+      };
+
+      const getHighestGrade = () => {
+        let highest = -Infinity;
+        let studentHighestGrade = null;
+
+        students.forEach((student) => {
+          let grade = student.grade;
+
+          if (grade > highest) {
+            highest = grade;
+            studentHighestGrade = student;
+          }
+        });
+
+        return studentHighestGrade;
+      };
+    </script>
+  </body>
+</html>
+
+<!-- Faça um algoritmo que leia a nota de 10 alunos de uma turma e guarde-as em um vetor. No final, mostre:
+a) Qual é a média da turma
+b) Quantos alunos estão acima da média da turma
+c) Qual foi a maior nota digitada
+d) Em que posições a maior nota aparece -->
